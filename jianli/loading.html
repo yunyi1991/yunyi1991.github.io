@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>loading</title>
+<style>
+	div{ position: fixed; width: 84px; height: 84px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+	span{
+		position: absolute; display: block; width: 35px; height: 8px; border-radius: 4px; animation-duration: 1s; animation-iteration-count: infinite; animation-timing-function: ease;
+		background-color: #000;
+	}
+	@keyframes rotate1{
+		from{
+			transform: rotate(0);
+		}to{
+			transform: rotate(180deg);
+		}
+	}
+	@keyframes rotate2{
+		from{
+			transform: rotate(-45deg);
+		}to{
+			transform: rotate(135deg);
+		}
+	}
+	@keyframes rotate3{
+		from{
+			transform: rotate(45deg);
+		}to{
+			transform: rotate(225deg);
+		}
+	}
+	@keyframes rotate4{
+		from{
+			transform: rotate(90deg);
+		}to{
+			transform: rotate(270deg);
+		}
+	}
+
+	span:nth-of-type(1){
+		top: 0; left: 24.5px; transform: rotate(0); animation-name: rotate1;
+		}
+	span:nth-of-type(2){
+		top: 12px; right: -1.5px; transform: rotate(45deg); animation-name: rotate3;
+	}
+	span:nth-of-type(3){
+		top: 38.5px; right: -11.5px; transform: rotate(90deg); animation-name: rotate4;
+	}
+	span:nth-of-type(4){
+		top: 65px; right: -1.5px; transform: rotate(-45deg); animation-name: rotate2;
+	}
+	span:nth-of-type(5){
+		bottom: 0; left: 24.5px; transform: rotate(0); animation-name: rotate1;
+	}
+	span:nth-of-type(6){
+		top: 65px; left: -1.5px; transform: rotate(45deg); animation-name: rotate3;
+	}
+	span:nth-of-type(7){
+		top: 38.5px; left: -13.5px; transform: rotate(90deg); animation-name: rotate4;
+	}
+	span:nth-of-type(8){
+		top: 12px; left: -1.5px; transform: rotate(-45deg); animation-name: rotate2;
+	}
+</style>
+</head>
+<body>
+<div>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+</body>
+</html>
