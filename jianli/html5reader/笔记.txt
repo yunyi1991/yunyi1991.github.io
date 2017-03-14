@@ -1,0 +1,66 @@
+1. 使用base64格式的图片
+	优势：
+	 -base64图片可以减少请求
+	 -加快首屏数据的显示速度
+
+	 background:url(...) ==> url(data:iamge/png; base64, {img_data})
+
+
+
+2.html5 API
+	querySelector	==> 类似jQuery选择器 document.querySelector("#a")
+	localStorage	==> 本地存储
+	postMessage		==> 跨域通信
+	window.performance	HTML5专门为测试提供的接口
+
+	contenteditable = true  任何一个div设置成可编辑的
+
+
+	**********---- 可以跨域的ajax请求？！ ---***********
+	XMLHttpRequest Level2升级了，对前端来说并不需要作多大的改变
+
+	http://coding.imooc.com/lesson/13.html#mid=189
+	协议   父域                。。。
+	协议和父域不同，那么就造成跨域
+
+
+3.触屏：
+	touchstart()
+	touchmove()
+	touchend()
+	touchcancel()
+
+4.viewport
+	<meta name="viewport" content="width=device-width, initial-scalse=1.0, maximum-scale=1.0,user-scalable=no">
+
+============================================
+
+移动（前端）性能陷阱
+
+1.减少或避免repaint, reflow 页面重绘
+	appendChild, removeChild, insertBefore, repleaceChild等都会引起
+	DOM节点操作
+	元素改变样式 style
+
+	如何避免？ 样式通过class修改
+
+2.尽量缓存所有可以缓存的数据
+	localStorage.setItem('data_1',JSON.stringify({...}));
+	sessionStorage
+	indexDB
+
+3.使用css3 transform代替dom操作
+
+( 非主流性能优化 )
+
+1.不要给非static定位元素增加css3动画
+
+2.适当使用硬件加速(GPU) canvas translate3d(0,0,0)	
+
+============================================
+
+<meta name="format-detection" content="telephone=no">
+文本上的手机号链接为超链接？否  默认的是yes
+
+
+
