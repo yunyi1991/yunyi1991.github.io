@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+*{ margin: 0; padding: 0; list-style: none; text-decoration: none;}
+.title{ display: block; text-align: center; margin-top: 50px; }
+#box{ width:660px; height:660px; margin:50px auto;}
+#box div{ float:left; position: relative; width: 200px; height: 200px; background: #ccc; margin:10px; overflow: hidden;}
+#box div span{ position: absolute; top: 0; left: -200px; width: 200px; height: 200px; background: pink;}
+</style>
+<script type="text/javascript" src="move.js"></script>
+<script>
+window.onload = function(){
+	var oDiv = document.getElementById('box');
+	var aDiv = oDiv.children;
+	for(var i=0; i<aDiv.length;i++){
+		navMove(aDiv[i]);
+	}
+
+	function setSit(obj,oEvent){
+		var w = obj.offsetWidth;
+		var h = obj.offsetHeight;
+		var x = oEvent.clientX - (obj.offsetLeft+w/2); //长边
+		var y = obj.offsetTop + h/2 - oEvent.clientY; //短边
+		return Math.round((Math.atan2(y,x)*180/Math.PI+180)/90)%4; //tan(y/x) --> 角度转弧度
+	}
+	
+	function navMove(obj){
+		
+		obj.onmouseover = function(ev){
+			var oEvent = ev || event;
+			var oFrom = oEvent.fromElement || oEvent.relatedTarget;
+			if(this.contains(oFrom)) return;
+			
+			var oSpan = this.children[0];
+			var flag = setSit(this,oEvent);
+			switch(flag){
+				case 0:
+				oSpan.style.top = '0px';
+				oSpan.style.left = '-200px';
+				break;
+
+				case 1:
+				oSpan.style.top = '200px';
+				oSpan.style.left = '0px';
+				break;
+
+				case 2:
+				oSpan.style.top = '0px';
+				oSpan.style.left = '200px';
+				break;
+
+				case 3:
+				oSpan.style.top = '-200px';
+				oSpan.style.left = '0px';
+				break;
+			}
+
+			move(oSpan,{left:0, top:0},{easing:'ease-out'});
+		};
+
+		obj.onmouseout = function(ev){
+			var oEvent = ev || event;
+			var oTo = oEvent.toElement || oEvent.relatedTarget;
+			if(this.contains(oTo)) return;
+			
+			var oSpan = this.children[0];
+			var flag = setSit(this,oEvent);
+
+			switch(flag){
+				case 0:
+				move(oSpan,{left:-200, top:0},{easing:'ease-out'});
+				break;
+
+				case 1:
+				move(oSpan,{left:0, top:200},{easing:'ease-out'});
+				break;
+
+				case 2:
+				move(oSpan,{left:200, top:0},{easing:'ease-out'});
+				break;
+
+				case 3:
+				move(oSpan,{left:0, top:-200},{easing:'ease-out'});
+				break;
+			}
+		};
+	}
+}
+</script>
+</head>
+
+<body>
+<span class="title">鼠标从不同方向滑过方块可见效果</span>
+<div id="box">
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+    <div><span></span></div>
+</div>
+</body>
+</html>
+

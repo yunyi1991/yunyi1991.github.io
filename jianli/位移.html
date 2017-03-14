@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>
+</title>
+<style>
+*{ margin: 0; padding: 0; list-style: none;}
+.title{ display: block; text-align: center; margin-top: 50px; }
+ul{ width: 640px; position: relative; margin: 50px auto;}
+li{ float: left; margin: 30px; width: 100px; height: 100px; line-height: 100px; text-align: center; color: #fff; background: #333;}
+.active{ border: 4px dashed red;}
+</style>
+<script>
+
+window.onload = function(){
+	var aLi = document.getElementsByTagName('li');
+
+	var aPos = [];
+	for(var i=0; i<aLi.length; i++){
+		aPos[i] = {left:aLi[i].offsetLeft, top:aLi[i].offsetTop};
+		aLi[i].style.left = aPos[i].left + "px";
+		aLi[i].style.top  = aPos[i].top  + "px";
+	}
+
+	for(var i=0; i<aLi.length; i++){
+		aLi[i].style.position = "absolute";
+		aLi[i].style.margin  = "0";
+		aLi[i].innerHTML = i;
+		aLi[i].index = i;
+		drag(aLi[i]);
+	}
+	var zIndex = 0;
+	function drag(obj){
+		
+		obj.onmousedown = function(ev){
+			var oEvent = ev || event;
+			var disX = oEvent.clientX - obj.offsetLeft;
+			var disY = oEvent.clientY - obj.offsetTop;
+			zIndex++;
+			obj.style.zIndex = zIndex;
+			
+			document.onmousemove = function(ev){
+				var oEvent = ev || event;
+				obj.style.left = oEvent.clientX - disX + "px";
+				obj.style.top  = oEvent.clientY - disY + "px";
+
+				var oNear = getNearst(obj);
+				
+				/*
+					i < al
+					移动范围：i=onear.index;  [i,onear) --
+
+					i > al
+					移动范围：i=onear.index;  (onear,i] ++
+				*/
+				
+				if(oNear){
+					var oI = obj.index;
+					var nI = oNear.index;
+					if(oI < nI){
+						for(var i=0; i<aLi.length; i++){
+							if(aLi[i].index>oI && aLi[i].index<=nI){
+								aLi[i].index--;
+								move(aLi[i],aPos[aLi[i].index]);
+							}
+						}
+					}
+					else{
+						for(var i=0; i<aLi.length; i++){
+							if(aLi[i].index >= nI && aLi[i].index < oI){
+								aLi[i].index ++;
+								move(aLi[i],aPos[aLi[i].index]);
+							}
+						}
+					}
+
+					obj.index = nI;
+				}
+			};
+
+			document.onmouseup = function(){
+				document.onmousemove = null;
+				document.onmousemove = null;
+
+				move(obj,aPos[obj.index]);
+			};
+
+			return false;
+		};
+	}
+
+	function getNearst(obj){
+		var min = 99999;
+		var minINdex = -1;
+
+		for(var i=0; i<aLi.length; i++){
+			//if(obj == aLi[i]) continue;
+			if(pengTest(obj,aLi[i])){
+				var str = getJuli(obj,aLi[i]);
+				if(str < min){
+					min = str;
+					minINdex = i;
+				}
+			}
+		}
+
+		if(minINdex == -1){
+			return null;
+		}
+
+		return aLi[minINdex];
+	}
+
+	function pengTest(obj1,obj2){
+		var l1 = obj1.offsetLeft;
+		var t1 = obj1.offsetTop;
+		var r1 = l1 + obj1.offsetWidth;
+		var b1 = t1 + obj1.offsetHeight;
+
+		var l2 = aPos[obj2.index].left;
+		var t2 = aPos[obj2.index].top;
+		var r2 = l2 + obj2.offsetWidth;
+		var b2 = t2 + obj2.offsetHeight;
+
+		if(r1<l2 || b1<t2 || l1>r2 || t1>b2){
+			return false
+		}else{
+			return true;
+		}
+	}
+};
+
+
+
+function getJuli(obj1,obj2){
+	var x = obj1.offsetLeft - obj2.offsetLeft;
+	var y = obj1.offsetTop - obj2.offsetTop;
+
+	return Math.sqrt(x*x + y*y);
+}
+
+function getStyle(obj,name){
+	return (obj.currentStyle || getComputedStyle(obj,false))[name];
+};
+
+function move(obj,json,options){
+	options = options || {};
+	options.duration = options.duration || 700;
+	options.easing = options.easing || "ease-out";
+
+	var start = {};
+	var dis = {};
+
+	for(var name in json){
+		start[name] = parseFloat(getStyle(obj,name));
+		dis[name] = json[name] - start[name];
+	}
+
+	var count = Math.round(options.duration/30);
+
+	var n=0;
+	clearInterval(obj.timer);
+
+	obj.timer = setInterval(function(){
+		n++;
+
+		for(var name in json){
+			switch(options.easing){
+				case "linear":
+				var a = n/count;
+				var cur = start[name] + dis[name]*a;
+				break;
+
+				case "ease-in":
+				var a = n/count;
+				var cur = start[name] + dis[name]*Math.pow(a,3);
+				break;
+
+				case "ease-out":
+				var a = 1 - n/count;
+				var cur = start[name] + dis[name]*(1-a*a*a);
+				break;
+			}
+
+			if(name == "opacity"){
+				obj.style.opacity = cur;
+				obj.style.filter = "alpha(opacity:"+cur*100+")";
+			}else{
+				obj.style[name] = cur + "px";
+			}
+		}
+
+		if(n==count){
+			clearInterval(obj.timer);
+			options.complete && options.complete();
+		}
+	},30);
+};
+</script>
+</head>
+<body>
+<span class="title">拖拽方块 改变顺序</span>
+<ul id="ul1">
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
+</body>
+</html>
